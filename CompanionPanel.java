@@ -8,6 +8,8 @@ Lin Sun
 import javax.swing.*;
 import java.io.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class CompanionPanel extends JLabel implements Runnable {
     
@@ -24,6 +26,12 @@ public class CompanionPanel extends JLabel implements Runnable {
         message = new JLabel("<html>"+ brain.message +"</html>");
         add(companion);
         add(message);
+        this.addComponentListener(new ComponentAdapter(){
+            @Override
+            public void componentResized(ComponentEvent e) {
+                brain.setFrame(getWidth(), getHeight());
+            }
+        });
     }
     
     /** Move the ghost around the screen and bounces it off the frame boundaries. */
