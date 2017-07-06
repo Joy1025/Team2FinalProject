@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.json.*;
-import java.math.*;
 
 /*
 CSE360 Summer 2017
@@ -35,9 +34,9 @@ public class CompanionBrain implements Observer {
     private boolean hot;
     private Random r;
     private int randomizer;
-    /**
-    * Create a CompanionBrain.
-    */
+    
+    /** Create a CompanionBrain. The brain controls the position, message, image,
+    and movement of the companion. */
     public CompanionBrain(int width, int height){
         frameWidth = width;
         frameHeight = height;
@@ -88,11 +87,17 @@ public class CompanionBrain implements Observer {
         }
     }
     
+    /** Set the bounds of the frame in which the ghost bounces
+    off of. The bounds are set to the integers passed in
+    corresponding respectively to width and height.*/
     public void setFrame(int width, int height) {
         frameWidth = width;
         frameHeight = height;
     }
     
+    /** Set the x and y coordinates of the ghost that
+    determines its position to be displayed. Sets position
+    based on current position, speed and friction.*/
     private void setPosition() {
         if (Integer.signum((int)hspeed) == -1) {
             hspeed = -speed;
@@ -112,7 +117,7 @@ public class CompanionBrain implements Observer {
             }
         } else {
             vspeed = speed;
-            if ((y + 96) > frameHeight) {
+            if ((y + 64) > frameHeight) {
                 vspeed = -Math.abs(vspeed);
             }
         }
@@ -121,18 +126,24 @@ public class CompanionBrain implements Observer {
         } else if (speed < -1) {
             speed += friction;
         } else if (friction != 0){
-            friction = 0;            
+            friction = 0;
         }
         x += hspeed;
         y += vspeed;
         time++;
     }
     
+    /** Fires the ghost forward in its current direction with
+    the given double values for force and friction.*/
     private void shoot(double force, double friction) {
         speed = force;
         this.friction = friction;
     }
     
+    /** Updates the ghost's position, movement, image and
+    message based on the state. Messages and images can be randomized
+    based on temperature, time of day, questions answered,
+    correct/incorrect streaks, and time taken to answer.*/
     public void updateState() {
         Timer timer = new Timer();
         if (state != prevState) {
@@ -175,38 +186,43 @@ public class CompanionBrain implements Observer {
                     }
                 } else {
                     img = "src/CSE360/Project2Images/ghost_-2_2.gif";
-                    if (randomizer == 1) {
+                    switch (randomizer) {
+                        case 1:
                         if (Boolean.valueOf(choose("true", "false"))) {
                             message = "AHHHHHHHHHHH!";
                         } else {
                             message = "YOU NIMCOMPOOP!";
                         }
-                    } else if (randomizer == 2) {
+                        break;
+                        case 2:
                         if (hot) {
                             message = "IF THE WEATHER DOESN'T BURN YOU ALIVE, I WILL!";
                         } else {
                             message = "I THINK THE TEMPERATURE MATCHES YOUR IQ.";
                         }
-                    } else {
-                        if (tod == 0) {
+                        break;
+                        default:
+                        switch (tod) {
+                            case 0:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "THE SUN RISES, AND YOUR SCORE FALLS.";
                             } else {
                                 message = "AT THIS POINT, YOU WILL HAVE FAILED OUT BY NOON!";
-                            }
-                        } else if (tod == 1) {
+                            }   break;
+                            case 1:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "YOU HAVE FAILED ME FOR THE LAST TIME, FOOL!";
                             } else {
                                 message = "ALL YOUR LUNCH HAS GONE TO YOUR HEAD!";
-                            }
-                        } else {
+                            }   break;
+                            default:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "GO TO BED, YOU'RE LOSING YOUR HEAD!";
                             } else {
                                 message = "DON'T DO QUESTIONS AFTER PARTYING LATE AT NIGHT!";
-                            }
+                            }   break;
                         }
+                        break;
                     }
                 }
                 speed = 0;
@@ -215,73 +231,89 @@ public class CompanionBrain implements Observer {
                 case 2: // 2 Sad/Angry
                 if(Boolean.valueOf(choose("true", "false"))) {
                     img = "src/CSE360/Project2Images/ghost_-1.gif";
-                    if (randomizer == 1) {
+                    switch (randomizer) {
+                        case 1:
                         if (Boolean.valueOf(choose("true", "false"))) {
                             message = "Don't worry, you will get the next one!";
                         } else {
                             message = "It's ok! You win some you lose some!";
                         }
-                    } else if (randomizer == 2) {
+                        break;
+                        case 2:
                         if (hot) {
                             message = "It's alright, maybe go get some water to cool off!";
                         } else {
                             message = "Don't worry about it, maybe sure you are layering up to stay warm!";
                         }
-                    } else {
-                        if (tod == 0) {
+                        break;
+                        default:
+                        switch (tod) {
+                            case 0:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "Might be a tad early to be doing test questions!";
                             } else {
                                 message = "Do not fret, the drowsiness will go away!";
                             }
-                        } else if (tod == 1) {
+                            break;
+                            case 1:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "I am a tad disappointed, but keep on going!";
                             } else {
                                 message = "You're going to make me cry if you get any more wrong...";
                             }
-                        } else {
+                            break;
+                            default:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "Understandable performance, it is quite late in the night afterall!";
                             } else {
                                 message = "Perhaps you should go to sleep? I worry about your health!";
                             }
+                            break;
                         }
+                        break;
                     }
                 } else {
                     img = "src/CSE360/Project2Images/ghost_-1_2.gif";
-                    if (randomizer == 1) {
+                    switch (randomizer) {
+                        case 1:
                         if (Boolean.valueOf(choose("true", "false"))) {
                             message = "Come on! What are you doing?";
                         } else {
                             message = "Don't do this to yourself!";
                         }
-                    } else if (randomizer == 2) {
+                        break;
+                        case 2:
                         if (hot) {
                             message = "You're letting the heat get to your head!";
                         } else {
                             message = "Go put on a jacket or something, the weather is clearly affecting you!";
                         }
-                    } else {
-                        if (tod == 0) {
+                        break;
+                        default:
+                        switch (tod) {
+                            case 0:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "Go back to sleep and dream up some brain cells!";
                             } else {
                                 message = "You are clearly not a morning person!";
                             }
-                        } else if (tod == 1) {
+                            break;
+                            case 1:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "I can't believe you are doing this poorly!";
                             } else {
                                 message = "Get a hold of yourself before I get a hold of you!";
                             }
-                        } else {
+                            break;
+                            default:
                             if(Boolean.valueOf(choose("true", "false"))) {
                                 message = "If this keeps up, consider going to bed early...";
                             } else {
                                 message = "It's past your bedtime. Go to sleep.";
                             }
+                            break;
                         }
+                        break;
                     }
                 }
                 speed = 1;
@@ -289,115 +321,139 @@ public class CompanionBrain implements Observer {
                 
                 case 3: // 3 Neutral
                 img = "src/CSE360/Project2Images/ghost_station.gif";
-                if (randomizer == 1) {
+                switch (randomizer) {
+                    case 1:
                     if (Boolean.valueOf(choose("true", "false"))) {
                         message = "You can do it! I believe in you!";
                     } else {
                         message = "Let's go answer some questions!";
                     }
-                } else if (randomizer == 2) {
+                    break;
+                    case 2:
                     if (hot) {
                         message = "Stay " + choose("focused", "motivated", "concentrated") + ", don't let the heat get to your head!";
                     } else {
                         message = "Stay " + choose("focused", "motivated", "concentrated") + ", don't let the cold get to your bones!";
                     }
-                } else {
-                    if (tod == 0) {
+                    break;
+                    default:
+                    switch (tod) {
+                        case 0:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "The early bird gets the worm!";
                         } else {
                             message = "Being up bright and early to tackle your problems is admirable.";
                         }
-                    } else if (tod == 1) {
+                        break;
+                        case 1:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "Have you ever considered your own mortality?";
                         } else {
                             message = "...";
                         }
-                    } else {
+                        break;
+                        default:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "Doing a quick brush up before heading to bed, eh?";
                         } else {
                             message = "Better finish up these questions, then go to sleep!";
                         }
+                        break;
                     }
+                    break;
                 }
                 speed = 2;
                 break;
                 
                 case 4: // 4 Happy
                 img = "src/CSE360/Project2Images/ghost_1.gif";
-                if (randomizer == 1) {
+                switch (randomizer) {
+                    case 1:
                     message = choose("Nice", "Woo", "Woohoo") + "! You are doing " + choose("it", "well", "a good job", "great") + "!";
-                } else if (randomizer == 2) {
+                    break;
+                    case 2:
                     if (hot) {
                         message = "Being able to think so clearly when it's so hot ... " + choose("Wow", "Amazing", "Spectacular") + "!";
                     } else {
                         message = "Even when it's so cold, you are doing so well ... " + choose("Wow", "Amazing", "Spectacular") + "!";
                     }
-                } else {
-                    if (tod == 0) {
+                    break;
+                    default:
+                    switch (tod) {
+                        case 0:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "I guess you must be a morning person!";
                         } else {
                             message = "You must not be that drowsy! Good work so far!";
                         }
-                    } else if (tod == 1) {
+                        break;
+                        case 1:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "A nice afternoon to be scoring some points!";
                         } else {
                             message = choose("Nice", "Woo", "Good job", "Good work") + "! Nice and productive in the middle of the day!";
                         }
-                    } else {
+                        break;
+                        default:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "You must be used to staying up late! Keep up the " + choose("Good job", "Good work") + "!";
                         } else {
                             message = "You can go to sleep knowing that you've done well! Keep it up!";
                         }
+                        break;
                     }
+                    break;
                 }
                 speed = 3;
                 break;
                 
                 case 5: // 5 Excited
                 img = "src/CSE360/Project2Images/ghost_2.gif";
-                if (randomizer == 1) {
+                switch (randomizer) {
+                    case 1:
                     if(Boolean.valueOf(choose("true", "false"))) {
                         message = "HOLY COW! YOU'RE ON A ROLL!";
                     } else {
                         message = "UNBELIEVABLE! YOU MUST BE THE NEXT EINSTEIN!";
                     }
-                } else if (randomizer == 2) {
+                    break;
+                    case 2:
                     if (hot) {
                         message = "YOUR BRAIN MUST BE SOLAR POWERED! YOU'RE  "+ choose("AMAZING", "SPECTACULAR", "ON A HOT STREAK") + "!";
                     } else {
                         message = choose("NICE", "WOO") + "! THIS WEATHER MUST BE HELPING YOU KEEP A COOL HEAD!";
                     }
-                } else {
-                    if (tod == 0) {
+                    break;
+                    default:
+                    switch (tod) {
+                        case 0:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "EARLY TO RISE, EARLY TO BIG SUCCESS!";
                         } else {
                             message = "A BRIGHT MIND SEES THE EARLY LIGHT!";
                         }
-                    } else if (tod == 1) {
+                        break;
+                        case 1:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "A nice afternoon to be scoring some points~";
                         } else {
                             message = choose("Nice", "Woo", "Good job", "Good work") + "! Nice and productive in the middle of the day!";
                         }
-                    } else {
+                        break;
+                        default:
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = choose("AWE-INSPIRING", "AMAZING", "SPECTACULAR", "TREMENDOUS", "INSPIRATIONAL") +" RESULTS, EVEN FOR THIS LATE AT NIGHT!";
                         } else {
                             message = "YOU MUST NOT BE AFFECTED BY DROWSINESS AT ALL! YOU ARE " + choose("AWE-INSPIRING", "AMAZING", "SPECTACULAR", "TREMENDOUS", "INSPIRATIONAL") + "!";
                         }
+                        break;
                     }
+                    break;
                 }
                 speed = 4;
                 break;
                 
-                case 6: // 6 Correct Answer                    
+                case 6: // 6 Correct Answer
                 img = "src/CSE360/Project2Images/ghost_correct.gif";
                 if (streak > 3) {
                     message = choose("You're on a roll!", "You are on a hot streak!", "WOW!" + streak + " in a row!", "Keep on going!");
@@ -418,12 +474,12 @@ public class CompanionBrain implements Observer {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                      state = score;
+                        state = score;
                     }
                 }, 3000);
                 break;
                 
-                case 7: // 7 wrong Answer                    
+                case 7: // 7 wrong Answer
                 img = "src/CSE360/Project2Images/ghost_feared.gif";
                 if (streak < -2) {
                     message = choose("You are doing terrible!", "Ahh! Stop!", "You've gotten" + Math.abs(streak) + "wrong in a row...", "Slow down and think!");
@@ -439,18 +495,19 @@ public class CompanionBrain implements Observer {
                     message = choose("Slow AND wrong, wow!", "I guess all that time spent wasn't on thinking...", "Can you waste more of my time please?");
                 } else {
                     message = choose("Wrong!", "AHHH!", "Did you misclick?", "What the heck? Wrong!", "Go study some more...", "Can you at least try?");
-                }                
+                }
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                      state = score;
+                        state = score;
                     }
-                  }, 3000);
+                }, 3000);
                 speed = 0;
                 break;
                 
-                case 8: // Spending medium time on question                
-                if (randomizer == 1) {
+                case 8: // Spending medium time on question
+                switch (randomizer) {
+                    case 1:
                     if (Boolean.valueOf(choose("true", "false"))) {
                         img = "src/CSE360/Project2Images/ghost_station1.gif";
                         message = "At least I have this ball to keep me occupied...";
@@ -458,7 +515,8 @@ public class CompanionBrain implements Observer {
                         img = "src/CSE360/Project2Images/ghost_station3.gif";
                         message = "A good time to practice my dancing!";
                     }
-                } else if (randomizer == 2) {
+                    break;
+                    case 2:
                     if (hot) {
                         img = "src/CSE360/Project2Images/ghost_hot1.gif";
                         if (Boolean.valueOf(choose("true", "false"))) {
@@ -476,136 +534,151 @@ public class CompanionBrain implements Observer {
                         }
                         speed = 1;
                     }
-                } else {
-                    if (tod == 0) {
+                    break;
+                    default:
+                    switch (tod) {
+                        case 0:
                         img = "src/CSE360/Project2Images/ghost_drowsy.gif";
                         speed = 1;
                         if(Boolean.valueOf(choose("true", "false"))) {
                             message = "It is too early for this, I'm going back to sleep...";
-                        } else {
-                            message = "I just woke up, but I might as well not have...";
+                            } else {
+                                message = "I just woke up, but I might as well not have...";
+                            }
+                            break;
+                            case 1:
+                            if (Boolean.valueOf(choose("true", "false"))) {
+                                img = "src/CSE360/Project2Images/ghost_station5.gif";
+                                message = "";
+                            } else {
+                                img = "src/CSE360/Project2Images/ghost_station6.gif";
+                                message = "";
+                            }
+                            break;
+                            default:
+                            img = "src/CSE360/Project2Images/ghost_drowsy.gif";
+                            speed = 1;
+                            if(Boolean.valueOf(choose("true", "false"))) {
+                                message = "It is late, I am a getting a bit tired...";
+                            } else {
+                                message = "Could you hurry? I'm sleepy...";
+                            }
+                            break;
                         }
-                    } else if (tod == 1) {
+                        break;
+                    }
+                    break;
+                    
+                    case 9: // Spending long time on question
+                    switch (randomizer) {
+                        case 1:
                         if (Boolean.valueOf(choose("true", "false"))) {
-                            img = "src/CSE360/Project2Images/ghost_station5.gif";
-                            message = "";
+                            img = "src/CSE360/Project2Images/ghost_station2.gif";
+                            message = "If you keep this up, I'll be a professional footballer!";
                         } else {
-                            img = "src/CSE360/Project2Images/ghost_station6.gif";
-                            message = "";
+                            img = "src/CSE360/Project2Images/ghost_station4.gif";
+                            message = "La..la..la..~~ Hurry up!";
                         }
-                    } else {
-                        img = "src/CSE360/Project2Images/ghost_drowsy.gif";
-                        speed = 1;
-                        if(Boolean.valueOf(choose("true", "false"))) {
-                            message = "It is late, I am a getting a bit tired...";
+                        break;
+                        case 2:
+                        if (hot) {
+                            img = "src/CSE360/Project2Images/ghost_hot2.gif";
+                            if (Boolean.valueOf(choose("true", "false"))) {
+                                message = "AHHH, IT'S TOO HOT, HURRY!";
+                            } else {
+                                message = "I'M ON FIRE, THIS WEATHER IS TERRIBLE!";
+                            }
+                            speed = 5;
                         } else {
-                            message = "Could you hurry? I'm sleepy...";
+                            img = "src/CSE360/Project2Images/ghost_cold2.gif";
+                            if (Boolean.valueOf(choose("true", "false"))) {
+                                message = "H-HURRY...";
+                            } else {
+                                message = "...";
+                            }
+                            speed = 0;
                         }
+                        break;
+                        default:
+                        if (tod == 1) {
+                            if (Boolean.valueOf(choose("true", "false"))) {
+                                img = "src/CSE360/Project2Images/ghost_shocked.gif";
+                                message = "I'm dying of boredom... please hurry...";
+                            } else {
+                                img = "src/CSE360/Project2Images/ghost_station7.gif";
+                                speed = 0;
+                                message = "aLl t-HIs, wAiTIng..#$% S@omEthI11ng IS w%r5ong.!#()";
+                            }
+                        } else {
+                            img = "src/CSE360/Project2Images/ghost_sleep.gif";
+                            message = "Z";
+                            speed = 0;
+                            int rZs = r.nextInt(6) + 2;
+                            for (int i = 0; i < rZs; i++) {
+                                message += "z";
+                            }
+                            message += "...";
+                        }
+                        break;
                     }
                 }
-                break;
-                
-                case 9: // Spending long time on question
-                if (randomizer == 1) {
-                    if (Boolean.valueOf(choose("true", "false"))) {
-                        img = "src/CSE360/Project2Images/ghost_station2.gif";
-                        message = "If you keep this up, I'll be a professional footballer!";
-                    } else {
-                        img = "src/CSE360/Project2Images/ghost_station4.gif";
-                        message = "La..la..la..~~ Hurry up!";
-                    }
-                } else if (randomizer == 2) {
-                    if (hot) {
-                        img = "src/CSE360/Project2Images/ghost_hot2.gif";
-                        if (Boolean.valueOf(choose("true", "false"))) {
-                            message = "AHHH, IT'S TOO HOT, HURRY!";
-                        } else {
-                            message = "I'M ON FIRE, THIS WEATHER IS TERRIBLE!";
-                        }
-                        speed = 5;
-                    } else {
-                        img = "src/CSE360/Project2Images/ghost_cold2.gif";
-                        if (Boolean.valueOf(choose("true", "false"))) {
-                            message = "H-HURRY...";
-                        } else {
-                            message = "...";
-                        }
-                        speed = 0;                    
-                    }
-                } else {
-                    if (tod == 1) {
-                        if (Boolean.valueOf(choose("true", "false"))) {
-                            img = "src/CSE360/Project2Images/ghost_shocked.gif";
-                            message = "I'm dying of boredom... please hurry...";
-                        } else {
-                            img = "src/CSE360/Project2Images/ghost_station7.gif";
-                            speed = 0;
-                            message = "aLl t-HIs, wAiTIng..#$% S@omEthI11ng IS w%r5ong.!#()";
-                        }
-                    } else {
-                        img = "src/CSE360/Project2Images/ghost_sleep.gif"; 
-                        message = "Z";
-                        speed = 0;
-                        int rZs = r.nextInt(6) + 2;
-                        for (int i = 0; i < rZs; i++) {
-                            message += "z";
-                        }
-                        message += "...";
-                    }
-                }                
+                prevState = state;
             }
-            prevState = state;
-        }
-        setPosition();
-        if (time > 1500 && time % 200 == 0) {
-            state = r.nextInt(2) + 8;
-        } else if (time > 1000) {
-            state = 9;
-        } else if (time > 400) {
-            state = 8;
-        }  
-    }
-    
-    public void update(Observable o, Object arg) {        
-        int newCorrect = 0;
-        int newAnswered = 10;
-        int[] corrArr = ((BlackBoard)o).getCorrectorNot();
-        for (int i = 0; i < corrArr.length; i ++) {
-            if (corrArr[i] == 0) {
-                newAnswered--;
-            } else if (corrArr[i] == 1) {
-                newCorrect++;
+            setPosition();
+            if (time > 1500 && time % 200 == 0) {
+                randomizer = r.nextInt(3) + 1;
+                state = r.nextInt(2) + 8;
+            } else if (time > 1000) {
+                state = 9;
+            } else if (time > 400) {
+                state = 8;
             }
         }
-        randomizer = r.nextInt(3) + 1;
-        time = 0;
-        if (newCorrect > correct) {
-            score++;
-            if (streak < 0) {
-                streak = 0;
+        
+        /** Update the values needed to determine the state, including
+        the number of questions correct and the number of questions
+        answered.*/
+        @Override
+        public void update(Observable o, Object arg) {
+            int newCorrect = 0;
+            int newAnswered = 10;
+            int[] corrArr = ((BlackBoard)o).getCorrectorNot();
+            for (int i = 0; i < corrArr.length; i ++) {
+                if (corrArr[i] == 0) {
+                    newAnswered--;
+                } else if (corrArr[i] == 1) {
+                    newCorrect++;
+                }
             }
-            streak++;
-            state = 6;
-            if (score > 5) {
-                score = 5;
+            randomizer = r.nextInt(3) + 1;
+            time = 0;
+            if (newCorrect > correct) {
+                score++;
+                if (streak < 0) {
+                    streak = 0;
+                }
+                streak++;
+                state = 6;
+                if (score > 5) {
+                    score = 5;
+                }
+            } else if (newAnswered > answered) {
+                score--;
+                if (streak > 0) {
+                    streak = 0;
+                }
+                streak--;
+                state = 7;
+                if (score < 1) {
+                    score = 1;
+                }
             }
-        } else if (newAnswered > answered) {
-            score--;
-            if (streak > 0) {
-                streak = 0;
-            }
-            streak--;
-            state = 7;
-            if (score < 1) {
-                score = 1;
-            }
+            correct = newCorrect;
+            answered = newAnswered;
         }
-        correct = newCorrect;
-        answered = newAnswered;
-    }
-    
-    private String choose(String... options) {
-        return options[r.nextInt(options.length)];
-    }
-}
-
+        
+        /* Return a random string from those passed in.*/
+        private String choose(String... options) {
+            return options[r.nextInt(options.length)];
+        }
+    }    
