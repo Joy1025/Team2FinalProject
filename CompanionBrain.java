@@ -50,7 +50,7 @@ public class CompanionBrain implements Observer {
         streak = 0;
         friction = 0;
         randomizer = r.nextInt(3) + 1;
-        state = 7;
+        state = 3;
         prevState = 0;
         score = 3;
         Calendar calendar = Calendar.getInstance();
@@ -449,22 +449,135 @@ public class CompanionBrain implements Observer {
                 speed = 0;
                 break;
                 
-                case 8: // Spending medium time on question
-                
+                case 8: // Spending medium time on question                
+                if (randomizer == 1) {
+                    if (Boolean.valueOf(choose("true", "false"))) {
+                        img = "src/CSE360/Project2Images/ghost_station1.gif";
+                        message = "At least I have this ball to keep me occupied...";
+                    } else {
+                        img = "src/CSE360/Project2Images/ghost_station3.gif";
+                        message = "A good time to practice my dancing!";
+                    }
+                } else if (randomizer == 2) {
+                    if (hot) {
+                        img = "src/CSE360/Project2Images/ghost_hot1.gif";
+                        if (Boolean.valueOf(choose("true", "false"))) {
+                            message = "Could you perhaps speed it up? This heat is a tad much.";
+                        } else {
+                            message = "This heat is unbearable... Please hurry...";
+                        }
+                        speed = 3;
+                    } else {
+                        img = "src/CSE360/Project2Images/ghost_cold1.gif";
+                        if (Boolean.valueOf(choose("true", "false"))) {
+                            message = "C-c-ould you h-h-hurry, it's " + choose("f-f-freezing...", "c-c-cold!", "a bit ch-chilly...");
+                        } else {
+                            message = "I sh-should have b-brought my jacket if I knew you'd t-take this long...";
+                        }
+                        speed = 1;
+                    }
+                } else {
+                    if (tod == 0) {
+                        img = "src/CSE360/Project2Images/ghost_drowsy.gif";
+                        speed = 1;
+                        if(Boolean.valueOf(choose("true", "false"))) {
+                            message = "It is too early for this, I'm going back to sleep...";
+                        } else {
+                            message = "I just woke up, but I might as well not have...";
+                        }
+                    } else if (tod == 1) {
+                        if (Boolean.valueOf(choose("true", "false"))) {
+                            img = "src/CSE360/Project2Images/ghost_station5.gif";
+                            message = "";
+                        } else {
+                            img = "src/CSE360/Project2Images/ghost_station6.gif";
+                            message = "";
+                        }
+                    } else {
+                        img = "src/CSE360/Project2Images/ghost_drowsy.gif";
+                        speed = 1;
+                        if(Boolean.valueOf(choose("true", "false"))) {
+                            message = "It is late, I am a getting a bit tired...";
+                        } else {
+                            message = "Could you hurry? I'm sleepy...";
+                        }
+                    }
+                }
                 break;
                 
                 case 9: // Spending long time on question
-                    
-                case 10: // spending very long time on question
+                if (randomizer == 1) {
+                    if (Boolean.valueOf(choose("true", "false"))) {
+                        img = "src/CSE360/Project2Images/ghost_station2.gif";
+                        message = "If you keep this up, I'll be a professional footballer!";
+                    } else {
+                        img = "src/CSE360/Project2Images/ghost_station4.gif";
+                        message = "La..la..la..~~ Hurry up!";
+                    }
+                } else if (randomizer == 2) {
+                    if (hot) {
+                        img = "src/CSE360/Project2Images/ghost_hot2.gif";
+                        if (Boolean.valueOf(choose("true", "false"))) {
+                            message = "AHHH, IT'S TOO HOT, HURRY!";
+                        } else {
+                            message = "I'M ON FIRE, THIS WEATHER IS TERRIBLE!";
+                        }
+                        speed = 5;
+                    } else {
+                        img = "src/CSE360/Project2Images/ghost_cold2.gif";
+                        if (Boolean.valueOf(choose("true", "false"))) {
+                            message = "H-HURRY...";
+                        } else {
+                            message = "...";
+                        }
+                        speed = 0;                    
+                    }
+                } else {
+                    if (tod == 1) {
+                        if (Boolean.valueOf(choose("true", "false"))) {
+                            img = "src/CSE360/Project2Images/ghost_shocked.gif";
+                            message = "I'm dying of boredom... please hurry...";
+                        } else {
+                            img = "src/CSE360/Project2Images/ghost_station7.gif";
+                            speed = 0;
+                            message = "aLl t-HIs, wAiTIng..#$% S@omEthI11ng IS w%r5ong.!#()";
+                        }
+                    } else {
+                        img = "src/CSE360/Project2Images/ghost_sleep.gif"; 
+                        message = "Z";
+                        speed = 0;
+                        int rZs = r.nextInt(6) + 2;
+                        for (int i = 0; i < rZs; i++) {
+                            message += "z";
+                        }
+                        message += "...";
+                    }
+                }                
             }
             prevState = state;
         }
         setPosition();
+        if (time > 1500 && time % 200 == 0) {
+            state = r.nextInt(2) + 8;
+        } else if (time > 1000) {
+            state = 9;
+        } else if (time > 400) {
+            state = 8;
+        }  
     }
     
     public void update(Observable o, Object arg) {        
         int newCorrect = 0;
-        int newAnswered = 0;
+        int newAnswered = 10;
+        int[] corrArr = ((BlackBoard)o).getCorrectorNot();
+        for (int i = 0; i < corrArr.length; i ++) {
+            if (corrArr[i] == 0) {
+                newAnswered--;
+            } else if (corrArr[i] == 1) {
+                newCorrect++;
+            }
+        }
+        randomizer = r.nextInt(3) + 1;
         time = 0;
         if (newCorrect > correct) {
             score++;
@@ -476,7 +589,7 @@ public class CompanionBrain implements Observer {
             if (score > 5) {
                 score = 5;
             }
-        } else if (newAnswered > answered){
+        } else if (newAnswered > answered) {
             score--;
             if (streak > 0) {
                 streak = 0;
@@ -486,7 +599,9 @@ public class CompanionBrain implements Observer {
             if (score < 1) {
                 score = 1;
             }
-        }        
+        }
+        correct = newCorrect;
+        answered = newAnswered;
     }
     
     private String choose(String... options) {
