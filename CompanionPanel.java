@@ -10,16 +10,23 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import javax.imageio.ImageIO;
+import java.awt.image.*;
 
 public class CompanionPanel extends JLabel implements Runnable {
-    
-    /** The ghost moves and bounces around the screen.*/
     private JLabel companion;
     private JLabel message;
     private CompanionBrain brain;
-    /** Create a Ghost with the provided file paths for the ghost image moving
-    right and left.*/
+    private BufferedImage tile;
+    
+    /** Create a CompanionPanel that contains a companion to help
+    take the quiz. The companion reacts to the users' quiz activities.*/
     public CompanionPanel() {
+        try {
+            tile = ImageIO.read(getClass().getResource("/CSE360/Project2Images/rock_bg.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setOpaque(false);
         brain = new CompanionBrain(500, 500);
         companion = new JLabel(new ImageIcon("src/CSE360/Project2Images/ghost_station.gif"));
@@ -34,13 +41,32 @@ public class CompanionPanel extends JLabel implements Runnable {
         });
     }
     
-    /** Move the ghost around the screen and bounces it off the frame boundaries. */
+    /** Make a nice tiled background.*/
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+        int tileWidth = tile.getWidth();
+        int tileHeight = tile.getHeight();
+        for (int y = 0; y < getHeight(); y += tileHeight) {
+            for (int x = 0; x < getWidth(); x += tileWidth) {
+                g2d.drawImage(tile, x, y, this);
+            }
+        }
+        g2d.dispose();
+    }
+    
+    
+    /** Move the ghost around the screen and bounces it off the frame boundaries.
+    Updates the ghost's image and message based off how the user is doing on the
+    quiz. */
     @Override
     public void run() {
         while(true) {
             try {
-                Thread.sleep(25);
+                Thread.sleep(50);
             } catch (InterruptedException i) {
+                i.printStackTrace();
                 java.lang.System.exit(1);
             }
             brain.updateState();
@@ -51,7 +77,7 @@ public class CompanionPanel extends JLabel implements Runnable {
             } else {
                 message.setBounds(brain.x - 64, brain.y + 40, 250, 64);
             }
-            message.setText("<html>"+ brain.message +"</html>");
+            message.setText("<html><font color = 'white'>" + brain.message + "</font></html>");
         }
     }
 }
