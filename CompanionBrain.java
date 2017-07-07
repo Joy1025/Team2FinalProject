@@ -57,6 +57,8 @@ public class CompanionBrain implements Observer {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         //DEBUG
+        //Time of day
+        //0 - Early, 1 - Middle, 2 - Late
         if (hour > 3 && hour <= 12) {
             tod = 0;
         } else if (hour > 12 && hour <= 19) {
@@ -478,7 +480,11 @@ public class CompanionBrain implements Observer {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        state = score;
+                        if (answered == 10) {
+                            state = 10;
+                        } else {
+                            state = score;
+                        }
                     }
                 }, 3000);
                 break;
@@ -503,7 +509,11 @@ public class CompanionBrain implements Observer {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        state = score;
+                        if (answered == 10) {
+                            state = 10;
+                        } else {
+                            state = score;
+                        }
                     }
                 }, 3000);
                 speed = 0;
@@ -624,8 +634,14 @@ public class CompanionBrain implements Observer {
                             message += "...";
                         }
                         break;
+                        
+                        case 10: // Done
+                        img = "src/CSE360/Project2Images/ghost_win.gif";
+                        message = choose("WOOOOOOOOOO!", "YOU DID IT!", "MISSION COMPLETE!", "GAME OVER!");
+                        shoot(50, 0.1);
+                        break;
+                        }
                     }
-                }
                 prevState = state;
             }
             setPosition();
