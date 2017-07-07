@@ -1,11 +1,3 @@
-package CSE360;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-
 /*
  * When the start quiz button is clicked
  * swtich from login page to exam page
@@ -13,6 +5,17 @@ import java.io.FileNotFoundException;
  * Kyle Sun
  * Jingyi Li
  */
+
+package CSE360;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.FileNotFoundException;
+
 
 public class SwitchPage extends JPanel implements ActionListener{
 
@@ -36,11 +39,15 @@ public class SwitchPage extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		 for (Component component : getComponents())
-	            if (loginPage == component) {
+	            if (loginPage == component && loginPage.user!= null &&loginPage.user!= " ") {
 	                remove(loginPage);
 	                add(examPage);
 
-	            } else {
+	            } 
+	            else if (loginPage == component && (loginPage.user == null || loginPage.user == " ")){
+	            	loginPage.text.setText("Please enter a valid user name and click enter");
+	            }
+	            else {
 	                remove(examPage);
 	                add(loginPage);
 	            }
