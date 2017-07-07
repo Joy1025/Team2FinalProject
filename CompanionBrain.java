@@ -11,6 +11,8 @@ Kyle Sun
 Jingyi Li
 Lin Sun
 */
+// I have marked three areas with //DEBUG to indicate code to modify
+// to help see all the possible messages. 
 
 public class CompanionBrain implements Observer {
     public String message;
@@ -54,6 +56,7 @@ public class CompanionBrain implements Observer {
         score = 3;
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        //DEBUG
         if (hour > 3 && hour <= 12) {
             tod = 0;
         } else if (hour > 12 && hour <= 19) {
@@ -76,6 +79,7 @@ public class CompanionBrain implements Observer {
             in.close();
             JSONObject jsonObj = new JSONObject(json);
             double temperature = jsonObj.getJSONObject("currently").getDouble("temperature");
+            //DEBUG
             if (temperature > 80) {
                 hot = true;
             } else {
@@ -625,12 +629,14 @@ public class CompanionBrain implements Observer {
                 prevState = state;
             }
             setPosition();
-            if (time > 1500 && time % 200 == 0) {
+            //DEBUG
+            // Time to wait between changing to time based states
+            if (time > 600 && time % 200 == 0) {
                 randomizer = r.nextInt(3) + 1;
                 state = r.nextInt(2) + 8;
-            } else if (time > 1000) {
-                state = 9;
             } else if (time > 400) {
+                state = 9;
+            } else if (time > 200) {
                 state = 8;
             }
         }
@@ -641,12 +647,10 @@ public class CompanionBrain implements Observer {
         @Override
         public void update(Observable o, Object arg) {
             int newCorrect = 0;
-            int newAnswered = 10;
-            int[] corrArr = ((BlackBoard)o).getCorrectorNot();
+            int newAnswered = ((BlackBoard)o).getQuesAnswered();
+            boolean[] corrArr = ((BlackBoard)o).getCorrectorNot();
             for (int i = 0; i < corrArr.length; i ++) {
-                if (corrArr[i] == 0) {
-                    newAnswered--;
-                } else if (corrArr[i] == 1) {
+                if (corrArr[i]) {
                     newCorrect++;
                 }
             }
@@ -681,4 +685,4 @@ public class CompanionBrain implements Observer {
         private String choose(String... options) {
             return options[r.nextInt(options.length)];
         }
-    }    
+    }
